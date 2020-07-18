@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += webenginewidgets
+QT += webenginewidgets webkitwidgets
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

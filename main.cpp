@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     QUrl URL;
     if (argc == 2)
     {
-        QRegularExpression reg("^((https?|ftp|smtp):\\/\\/)?(www.)?[a-z0-9]+\\.[a-z]+(\\/[a-zA-Z0-9#]+\\/?)*$");
+        QRegularExpression reg("(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
         QRegularExpressionMatch match = reg.match(argv[1]);
 
         if (match.hasMatch())
