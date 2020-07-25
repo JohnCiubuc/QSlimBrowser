@@ -1,11 +1,33 @@
 
+
 ## QSlimBrowser
 
 This is a simple Qt [QWebEngineView](https://doc.qt.io/qt-5/qtwebengine-overview.html)  container that loads a URL from an [argument](https://www.bleepingcomputer.com/tutorials/understanding-command-line-arguments-and-how-to-use-them/) or, if no arguments are given, will just open Google. 
+
+## Building
+
+```bash
+git clone https://github.com/JohnCiubuc/QSlimBrowser.git
+cd QSlimBrowser
+mkdir build && cd build
+cmake .. && make
+```
+
+## Usage
+```bash
+QSlimBrowser [URL]
+```
+Where url is in quotation marks or back escaped (if your shell allows it), examples:
+```bash
+QSlimBrowser "http://google.com"
+```
+```bash
+QSlimBrowser http:\/\/google.com
+```
 ## Advance Usage
 QSlimBrowser has the ability to **automate actions** and to **inject CSS** into a webpage. This is very useful if you want to auto-login into a webapp and have a userstyle applied to it.
 
-There is a **Scripts** folder and a **Userstyles** folder. These folders ***must be in the same directory as the executable***. I'll figure out a smarter way to do this in the future
+There is a **Scripts** folder and a **Userstyles** folder. These folders ***must be in the same directory as the executable***. Following the **Building** instructions above should copy the folders into the *build* directory for you automatically. I'll figure out a smarter way to do this in the future
 
 ----
 

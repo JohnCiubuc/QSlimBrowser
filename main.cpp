@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
     }
     else
         URL = QUrl("http://www.google.com");
-
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 

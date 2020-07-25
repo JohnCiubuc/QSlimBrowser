@@ -44,7 +44,7 @@ void MainWindow::loadFinished(bool b)
 {
     if(b == true)
     {
-        QTimer::singleShot(1000, this, &MainWindow::loadScripts);
+        QTimer::singleShot(1500, this, &MainWindow::loadScripts);
     }
 }
 
@@ -66,5 +66,5 @@ void MainWindow::urlChanged(QUrl url)
     if(!css.isEmpty())
         insertStyleSheet(url.toString(), css, true);
 
-    QTimer::singleShot(2500, this, &MainWindow::loadScripts);
+    QTimer::singleShot(1500, this, &MainWindow::loadScripts);
 }
