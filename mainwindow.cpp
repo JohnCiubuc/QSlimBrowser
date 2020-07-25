@@ -5,7 +5,11 @@ MainWindow::MainWindow(QWidget *parent)
     , m_view(new QWebEngineView(this))
 {
     setCentralWidget(m_view);
-    setStyle("::-webkit-scrollbar {width: 12px;} ::-webkit-scrollbar-track {-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); -webkit-border-radius: 10px; border-radius: 10px;} ::-webkit-scrollbar-thumb {    -webkit-border-radius: 10px; border-radius: 10px; background: rgba(255,255,0,0.8); -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); } ::-webkit-scrollbar-thumb:window-inactive {background: rgba(255,0,0,0.4); }");
+    connect(m_view, &QWebEngineView::loadFinished, this, &MainWindow::loadFinished);
+    connect(m_view, &QWebEngineView::urlChanged, this, &MainWindow::urlChanged);
+    lParser.loadFiles();
+    cssParser.loadFiles();
+    sParser.loadFiles();
 }
 
 void MainWindow::loadURL(QUrl URL)
@@ -13,16 +17,54 @@ void MainWindow::loadURL(QUrl URL)
     m_view->page()->load(URL);
 }
 
-void MainWindow::setStyle(const QString data)
+void MainWindow::insertStyleSheet(const QString &name, const QString &source, bool immediately)
 {
-    QTemporaryFile file;
-    if (file.open())
-    {
-        const QString path = file.fileName();
+    QWebEngineScript script;
+    QString s = QString::fromLatin1("(function() {"\
+                                    "    css = document.createElement('style');"\
+                                    "    css.type = 'text/css';"\
+                                    "    css.id = '%1';"\
+                                    "    document.head.appendChild(css);"\
+                                    "    css.innerText = '%2';"\
+                                    "})()").arg(name).arg(source.simplified());
 
-        QTextStream stream(&file);
-        stream << data<<Qt::endl;
-        QWebSettings *settings = QWebSettings::globalSettings();
-        settings->setUserStyleSheetUrl(QUrl(path));
+
+    if (immediately)
+        m_view->page()->runJavaScript(s, QWebEngineScript::ApplicationWorld);
+
+    script.setName(name);
+    script.setSourceCode(s);
+    script.setInjectionPoint(QWebEngineScript::DocumentReady);
+    script.setRunsOnSubFrames(true);
+    script.setWorldId(QWebEngineScript::ApplicationWorld);
+    m_view->page()->scripts().insert(script);
+}
+
+void MainWindow::loadFinished(bool b)
+{
+    if(b == true)
+    {
+        QTimer::singleShot(1000, this, &MainWindow::loadScripts);
     }
+}
+
+void MainWindow::loadScripts()
+{
+    QString url = m_view->url().toString();
+    QString js = lParser.getLoginJavascript(url);
+    if(!js.isEmpty())
+        m_view->page()->runJavaScript(js);
+
+    QString scripts = sParser.getScriptJavascript(url);
+    if(!scripts.isEmpty())
+        m_view->page()->runJavaScript(scripts);
+}
+
+void MainWindow::urlChanged(QUrl url)
+{
+    QString css = cssParser.getUserCss(url.toString());
+    if(!css.isEmpty())
+        insertStyleSheet(url.toString(), css, true);
+
+    QTimer::singleShot(2500, this, &MainWindow::loadScripts);
 }

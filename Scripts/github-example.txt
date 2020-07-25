@@ -1,0 +1,10 @@
+Domain
+    https://github.com/login
+TextFieldByID
+    login_field
+    Username
+TextFieldByID
+    password
+    Password
+ButtonBySelector
+    input[name="commit"]

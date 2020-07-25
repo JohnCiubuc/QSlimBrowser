@@ -1,0 +1,10 @@
+Domain
+    https://www.facebook.com/
+TextFieldByID
+    email
+    john.doe@gmail.com
+TextFieldByID
+    pass
+    password123
+ButtonByID
+    u_0_b

@@ -1,0 +1,10 @@
+Domain
+    https://www.amboss.com/us/account/login
+TextFieldByID
+    signin_username
+    john.doe@gmail.com
+TextFieldByID
+    signin_password
+    password123
+ButtonBySelector
+    input[type="submit"]
