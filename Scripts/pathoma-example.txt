@@ -1,0 +1,10 @@
+Domain
+    https://www.pathoma.com/login
+TextFieldByID
+    user_login
+    Username or Email
+TextFieldByID
+    user_pass
+    Password
+ButtonByID
+    wp-submit
