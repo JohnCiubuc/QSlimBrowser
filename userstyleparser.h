@@ -14,7 +14,7 @@ class UserstyleParser : public QObject
     Q_OBJECT
     struct usercss_s
     {
-        QString domain;
+        QStringList domains;
         QString css;
     };
 

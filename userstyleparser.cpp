@@ -22,58 +22,38 @@ void UserstyleParser::loadFiles()
             while (!in.atEnd())
             {
                 QString line = in.readLine();
-                if(!bAbortFile)
+                if(bFirstBracket)
                 {
-                    if(!bFirstBracket)
-                    {
-                        if(line.contains("{"))
-                        {
-                            bFirstBracket = true;
-                            line.replace(line.indexOf('{'), 1, ' ');
-                        }
-                    }
+//                    if(line.contains("{"))
+//                    {
+//                        bFirstBracket = true;
+//                        line.replace(line.indexOf('{'), 1, ' ');
+//                    }
                     s.css += line;
                 }
                 else
                 {
-                    QRegularExpression reg("@-moz-document domain\\(\"(.+)\"\\)");
+                    QRegularExpression reg(".+\\(\"(.+)\"\\)");
                     QRegularExpressionMatch match = reg.match(line);
 
                     if (match.hasMatch())
                     {
                         bAbortFile = false;
-                        s.domain = match.captured(1);
+                        s.domains <<  match.captured(1);
                         // bracket included
                         if(line.contains("{"))
                         {
                             bFirstBracket = true;
                             s.css += "";
                         }
-                        // next line has bracket?
-                        else
-                        {
-
-                        }
                     }
+                    // next line has bracket?
                     else
                     {
-                        reg.setPattern("@-moz-document url-prefix\\(\"(.+)\"\\)");
-                        match = reg.match(line);
-                        if (match.hasMatch())
+                        if(line.contains("{"))
                         {
-                            bAbortFile = false;
-                            s.domain = match.captured(1);
-                            // bracket included
-                            if(line.contains("{"))
-                            {
-                                bFirstBracket = true;
-                                s.css += "";
-                            }
-                            // next line has bracket?
-                            else
-                            {
-
-                            }
+                            bFirstBracket = true;
+                            s.css += "";
                         }
                     }
                 }
@@ -91,8 +71,8 @@ QString UserstyleParser::getUserCss(QString url)
 {
     for(auto s : UserCss)
     {
-        qDebug() << url << " +++++ " << s.domain;
-        if(url.contains(s.domain))
+        qDebug() << url << " +++++ " << s.domains;
+        if(s.domains.contains(url))
             return s.css;
     }
     return QString();

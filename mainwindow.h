@@ -10,7 +10,8 @@
 #include <QWebEngineScriptCollection>
 #include <QWebSettings>
 #include <QTimer>
-
+#include <QWebEngineProfile>
+#include <QFileDialog>
 #include "loginparser.h"
 #include "userstyleparser.h"
 #include "scriptparser.h"
@@ -26,6 +27,7 @@ private slots:
     void loadFinished(bool b);
     void loadScripts();
     void urlChanged(QUrl url);
+    void downloadRequested(QWebEngineDownloadItem*);
 private:
     QWebEngineView *m_view;
     LoginParser lParser;

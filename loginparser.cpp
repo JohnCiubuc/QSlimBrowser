@@ -75,6 +75,16 @@ void LoginParser::loadFiles()
                     }
                     s.ButtonById << in.readLine().simplified();
                 }
+                if (line == "LocationOverride")
+                {
+                    if(in.atEnd())
+                    {
+                        qWarning() << "ERROR: LocationOverride IS EMPTY";
+                        bAbortFile = true;
+                        break;
+                    }
+                    s.LocationOverride << in.readLine().simplified();
+                }
                 if (line == "ButtonBySelector")
                 {
                     if(in.atEnd())
@@ -125,6 +135,11 @@ QString LoginParser::getLoginJavascript(QString url)
             {
                 auto element = s.ButtonBySelector.at(i);
                 js += "document.querySelectorAll('"+ element + "')[0].click();";
+            }
+            for(int i = 0; i < s.LocationOverride.size(); ++i)
+            {
+                auto element = s.LocationOverride.at(i);
+                js += "location.href=\""+ element + "\";";
             }
             return js;
         }

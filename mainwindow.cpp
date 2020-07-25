@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(m_view);
     connect(m_view, &QWebEngineView::loadFinished, this, &MainWindow::loadFinished);
     connect(m_view, &QWebEngineView::urlChanged, this, &MainWindow::urlChanged);
+    connect(QWebEngineProfile::defaultProfile(), SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
+            this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
     lParser.loadFiles();
     cssParser.loadFiles();
     sParser.loadFiles();
@@ -67,4 +69,20 @@ void MainWindow::urlChanged(QUrl url)
         insertStyleSheet(url.toString(), css, true);
 
     QTimer::singleShot(1500, this, &MainWindow::loadScripts);
+}
+
+void MainWindow::downloadRequested(QWebEngineDownloadItem * download)
+{
+    if (download->savePageFormat() != QWebEngineDownloadItem::UnknownSaveFormat)
+    {
+        qDebug() << "Format: " <<  download->savePageFormat();
+        qDebug() << "Path: " << download->downloadDirectory();
+        // If you want to modify something like the default path or the format
+//        download->setSavePageFormat(...);
+        QFileDialog fd;
+        auto path = fd.getSaveFileName(nullptr,"Save File",QApplication::applicationDirPath());
+        download->setDownloadDirectory(path);
+        // Check your url to accept/reject the download
+        download->accept();
+    }
 }

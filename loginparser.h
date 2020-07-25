@@ -20,6 +20,7 @@ class LoginParser : public QObject
         QStringList TextFieldSel;
         QStringList ButtonById;
         QStringList ButtonBySelector;
+        QStringList LocationOverride;
     };
 
 public:
