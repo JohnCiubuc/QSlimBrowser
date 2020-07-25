@@ -71,7 +71,6 @@ QString UserstyleParser::getUserCss(QString url)
 {
     for(auto s : UserCss)
     {
-        qDebug() << url << " +++++ " << s.domains;
         if(s.domains.contains(url))
             return s.css;
     }

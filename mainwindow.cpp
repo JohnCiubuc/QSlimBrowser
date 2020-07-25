@@ -19,7 +19,7 @@ void MainWindow::loadURL(QUrl URL)
     m_view->page()->load(URL);
 }
 
-void MainWindow::insertStyleSheet(const QString &name, const QString &source, bool immediately)
+void MainWindow::insertStyleSheet(const QString &name, const QString &source)
 {
     QWebEngineScript script;
     QString s = QString::fromLatin1("(function() {"\
@@ -30,16 +30,13 @@ void MainWindow::insertStyleSheet(const QString &name, const QString &source, bo
                                     "    css.innerText = '%2';"\
                                     "})()").arg(name).arg(source.simplified());
 
-
-    if (immediately)
-        m_view->page()->runJavaScript(s, QWebEngineScript::ApplicationWorld);
-
     script.setName(name);
     script.setSourceCode(s);
     script.setInjectionPoint(QWebEngineScript::DocumentReady);
     script.setRunsOnSubFrames(true);
     script.setWorldId(QWebEngineScript::ApplicationWorld);
     m_view->page()->scripts().insert(script);
+    m_view->page()->runJavaScript(s, QWebEngineScript::ApplicationWorld);
 }
 
 void MainWindow::loadFinished(bool b)
@@ -66,7 +63,7 @@ void MainWindow::urlChanged(QUrl url)
 {
     QString css = cssParser.getUserCss(url.toString());
     if(!css.isEmpty())
-        insertStyleSheet(url.toString(), css, true);
+        insertStyleSheet(url.toString(), css);
 
     QTimer::singleShot(1500, this, &MainWindow::loadScripts);
 }

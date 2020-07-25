@@ -2,9 +2,9 @@ Domain
     https://www.pathoma.com/login
 TextFieldByID
     user_login
-    Username or Email
+    Email Here
 TextFieldByID
     user_pass
-    Password
+    Password Here
 ButtonByID
     wp-submit

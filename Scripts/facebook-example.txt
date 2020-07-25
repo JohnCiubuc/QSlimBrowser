@@ -2,9 +2,9 @@ Domain
     https://www.facebook.com/
 TextFieldByID
     email
-    john.doe@gmail.com
+    Email Here
 TextFieldByID
     pass
-    password123
+    Password Here
 ButtonByID
     u_0_b

@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     void loadURL(QUrl URL);
-    void insertStyleSheet(const QString &name, const QString &source, bool immediately);
+    void insertStyleSheet(const QString &name, const QString &source);
 private slots:
     void loadFinished(bool b);
     void loadScripts();

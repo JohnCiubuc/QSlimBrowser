@@ -2,9 +2,9 @@ Domain
     https://github.com/login
 TextFieldByID
     login_field
-    Username
+    Email Here
 TextFieldByID
     password
-    Password
+    Password Here
 ButtonBySelector
     input[name="commit"]
