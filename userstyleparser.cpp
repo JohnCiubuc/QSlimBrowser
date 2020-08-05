@@ -71,8 +71,11 @@ QString UserstyleParser::getUserCss(QString url)
 {
     for(auto s : UserCss)
     {
-        if(s.domains.contains(url))
-            return s.css;
+        for (auto sd : s.domains)
+        {
+            if(url.contains(sd, Qt::CaseInsensitive))
+                return s.css;
+        }
     }
     return QString();
 }
