@@ -15,6 +15,7 @@
 #include "loginparser.h"
 #include "userstyleparser.h"
 #include "scriptparser.h"
+#include "webengineurlinterceptor.h"
 
 class MainWindow : public QMainWindow
 {
@@ -33,6 +34,7 @@ private:
     LoginParser lParser;
     UserstyleParser cssParser;
     ScriptParser sParser;
+    WebEngineURLInterceptor * Interceptor;
 };
 
 #endif // MAINWINDOW_H

@@ -27,7 +27,8 @@ int main(int argc, char *argv[])
             return invalidArgument(QString("Invalid URL: " + QString(argv[1])));
     }
     else
-        URL = QUrl("http://www.google.com");
+//        URL = QUrl("http://www.google.com");
+        URL = QUrl("https://ads-blocker.com/testing/#ad-blocker-test-steps");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);

@@ -1,5 +1,6 @@
 #include "loginparser.h"
 
+#define db qDebug() << this <<
 LoginParser::LoginParser(QObject *parent) : QObject(parent)
 {
 
@@ -21,6 +22,7 @@ void LoginParser::loadFiles()
             while (!in.atEnd())
             {
                 QString line = in.readLine();
+                element_s El;
                 if (line == "Domain")
                 {
                     if(in.atEnd())
@@ -39,14 +41,15 @@ void LoginParser::loadFiles()
                         bAbortFile = true;
                         break;
                     }
-                    s.TextField << in.readLine().simplified();
+                    El.type = TextField;
+                    El.elements << in.readLine().simplified();
                     if(in.atEnd())
                     {
                         qWarning() << "ERROR: TextField IS EMPTY OR MISSING";
                         bAbortFile = true;
                         break;
                     }
-                    s.TextField << in.readLine().simplified();
+                    El.elements << in.readLine().simplified();
                 }
                 if (line == "TextFieldBySelector")
                 {
@@ -56,14 +59,15 @@ void LoginParser::loadFiles()
                         bAbortFile = true;
                         break;
                     }
-                    s.TextFieldSel << in.readLine().simplified();
+                    El.type = TextFieldSel;
+                    El.elements << in.readLine().simplified();
                     if(in.atEnd())
                     {
                         qWarning() << "ERROR: TextField IS EMPTY OR MISSING";
                         bAbortFile = true;
                         break;
                     }
-                    s.TextFieldSel << in.readLine().simplified();
+                    El.elements << in.readLine().simplified();
                 }
                 if (line == "ButtonByID")
                 {
@@ -73,7 +77,8 @@ void LoginParser::loadFiles()
                         bAbortFile = true;
                         break;
                     }
-                    s.ButtonById << in.readLine().simplified();
+                    El.type = ButtonById;
+                    El.elements << in.readLine().simplified();
                 }
                 if (line == "LocationOverride")
                 {
@@ -83,7 +88,8 @@ void LoginParser::loadFiles()
                         bAbortFile = true;
                         break;
                     }
-                    s.LocationOverride << in.readLine().simplified();
+                    El.type = LocationOverride;
+                    El.elements << in.readLine().simplified();
                 }
                 if (line == "ButtonBySelector")
                 {
@@ -93,8 +99,11 @@ void LoginParser::loadFiles()
                         bAbortFile = true;
                         break;
                     }
-                    s.ButtonBySelector << in.readLine().simplified();
+                    El.type = ButtonBySelector;
+                    El.elements << in.readLine().simplified();
                 }
+                if(!El.elements.isEmpty())
+                    s.Elements << El;
             }
             f.close();
             if(!bAbortFile)
@@ -110,6 +119,11 @@ QString LoginParser::getLoginJavascript(QString url)
         if(s.Element.value("Domain") == url)
         {
             QString js;
+            qDebug() << this << s.TextField;
+            qDebug() << this << s.TextFieldSel;
+            qDebug() << this << s.ButtonById;
+            qDebug() << this << s.ButtonBySelector;
+            qDebug() << this << s.LocationOverride;
             for(int i = 0; i < s.TextField.size(); ++i)
             {
                 auto element = s.TextField.at(i++);
@@ -145,4 +159,61 @@ QString LoginParser::getLoginJavascript(QString url)
         }
     }
     return QString();
+}
+
+void LoginParser::runLogins(QString url, QWebEnginePage *page)
+{
+    for(auto s: Logins)
+    {
+        if(s.Element.value("Domain") == url)
+        {
+            QString js;
+            for(int x = 0; x < s.Elements.size(); ++x)
+            {
+                element_s elements = s.Elements.at(x);
+                switch(elements.type)
+                {
+                case TextField:
+                {
+                    auto element = elements.elements.at(0);
+                    auto value = elements.elements.at(1);
+                    js = "document.getElementById(\"" + element + "\").value=\""+value+"\";\n";
+                    js += "document.getElementById(\"" + element + "\").dispatchEvent(new Event('change'));\n";
+                }
+                break;
+                case TextFieldSel:
+                {
+                    auto element = elements.elements.at(0);
+                    auto value = elements.elements.at(1);
+                    js = "document.querySelectorAll('" + element + "')[0].value=\""+value+"\";\n";
+                    js += "document.querySelectorAll('" + element + "')[0].dispatchEvent(new Event('change'));\n";
+                }
+                break;
+                case ButtonById:
+                {
+                    auto element = elements.elements.at(0);
+                    js = "document.getElementById(\""+ element + "\").click();";
+                }
+                break;
+                case ButtonBySelector:
+                {
+                    auto element = elements.elements.at(0);
+                    js = "document.querySelectorAll('"+ element + "')[0].click();";
+                }
+                break;
+                case LocationOverride:
+                {
+                    auto element = elements.elements.at(0);
+                    js = "location.href=\""+ element + "\";";
+                }
+                break;
+                default:
+                    break;
+                }
+//                QThread::sleep(1);
+                db js;
+                page->runJavaScript(js);
+            }
+        }
+    }
 }

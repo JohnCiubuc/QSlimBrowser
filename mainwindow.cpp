@@ -1,14 +1,17 @@
 #include "mainwindow.h"
 
+#define db qDebug() << this <<
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_view(new QWebEngineView(this))
 {
     setCentralWidget(m_view);
+    Interceptor = new WebEngineURLInterceptor;
     connect(m_view, &QWebEngineView::loadFinished, this, &MainWindow::loadFinished);
     connect(m_view, &QWebEngineView::urlChanged, this, &MainWindow::urlChanged);
     connect(QWebEngineProfile::defaultProfile(), SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
             this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
+    m_view->page()->setUrlRequestInterceptor(Interceptor);
     lParser.loadFiles();
     cssParser.loadFiles();
     sParser.loadFiles();
@@ -50,13 +53,15 @@ void MainWindow::loadFinished(bool b)
 void MainWindow::loadScripts()
 {
     QString url = m_view->url().toString();
-    QString js = lParser.getLoginJavascript(url);
-    if(!js.isEmpty())
-        m_view->page()->runJavaScript(js);
+    db url;
+    lParser.runLogins(url, m_view->page());
+//    QString js = lParser.getLoginJavascript(url);
+//    if(!js.isEmpty())
+//        m_view->page()->runJavaScript(js);
 
-    QString scripts = sParser.getScriptJavascript(url);
-    if(!scripts.isEmpty())
-        m_view->page()->runJavaScript(scripts);
+//    QString scripts = sParser.getScriptJavascript(url);
+//    if(!scripts.isEmpty())
+//        m_view->page()->runJavaScript(scripts);
 }
 
 void MainWindow::urlChanged(QUrl url)
@@ -65,7 +70,7 @@ void MainWindow::urlChanged(QUrl url)
     if(!css.isEmpty())
         insertStyleSheet(url.toString(), css);
 
-    QTimer::singleShot(1500, this, &MainWindow::loadScripts);
+    QTimer::singleShot(5500, this, &MainWindow::loadScripts);
 }
 
 void MainWindow::downloadRequested(QWebEngineDownloadItem * download)

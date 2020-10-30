@@ -7,15 +7,34 @@
 #include <QDir>
 #include <QApplication>
 #include <QTextStream>
+#include <QWebEnginePage>
+#include <QThread>
 
 
 class LoginParser : public QObject
 {
     Q_OBJECT
 
+
+    enum element_type_enum
+    {
+        TextField,
+        TextFieldSel,
+        ButtonById,
+        ButtonBySelector,
+        LocationOverride
+    };
+
+    struct element_s
+    {
+        element_type_enum type;
+        QStringList elements;
+    };
+
     struct login_s
     {
         QMap<QString,QString> Element;
+        QList<element_s> Elements;
         QStringList TextField;
         QStringList TextFieldSel;
         QStringList ButtonById;
@@ -29,6 +48,7 @@ public:
     void loadFiles();
 
     QString getLoginJavascript(QString url);
+    void runLogins(QString url, QWebEnginePage * page);
 
 
 signals:

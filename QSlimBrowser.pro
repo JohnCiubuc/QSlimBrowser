@@ -24,13 +24,15 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     scriptparser.cpp \
-    userstyleparser.cpp
+    userstyleparser.cpp \
+    webengineurlinterceptor.cpp
 
 HEADERS += \
     loginparser.h \
     mainwindow.h \
     scriptparser.h \
-    userstyleparser.h
+    userstyleparser.h \
+    webengineurlinterceptor.h
 
 FORMS += \
     mainwindow.ui
